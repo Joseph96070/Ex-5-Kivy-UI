@@ -25,7 +25,7 @@ MIXPANEL = MixPanel("Project Name", MIXPANEL_TOKEN)
 SCREEN_MANAGER = ScreenManager()
 MAIN_SCREEN_NAME = 'main'
 ADMIN_SCREEN_NAME = 'admin'
-
+SECOND_SCREEN_NAME = 'second'
 
 class ProjectNameGUI(App):
     """
@@ -48,12 +48,31 @@ class MainScreen(Screen):
     Class to handle the main screen and its associated touch events
     """
 
+    @staticmethod
+    def transition_to_second_screen():
+        SCREEN_MANAGER.current = SECOND_SCREEN_NAME
+
     def pressed(self):
         """
         Function called on button touch event for button with id: testButton
         :return: None
         """
+        if self.btn.text == "on":
+            self.btn.text = "off"
+        elif self.btn.text == "off":
+            self.btn.text = "on"
+
         print("Callback from MainScreen.pressed()")
+
+    def pushed(self):
+        if self.motor.text == "motor-on":
+            self.motor.text = "motor-off"
+        elif self.motor.text == "motor-off":
+            self.motor.text = "motor-on"
+
+
+    def counterpressed(self):
+            self.counter.text = str(int(self.counter.text) + 1)
 
     def admin_action(self):
         """
@@ -63,6 +82,10 @@ class MainScreen(Screen):
         """
         SCREEN_MANAGER.current = 'passCode'
 
+class SecondScreen(Screen):
+    @staticmethod
+    def transition_to_main_screen():
+        SCREEN_MANAGER.current = MAIN_SCREEN_NAME
 
 class AdminScreen(Screen):
     """
@@ -79,7 +102,7 @@ class AdminScreen(Screen):
 
         PassCodeScreen.set_admin_events_screen(ADMIN_SCREEN_NAME)  # Specify screen name to transition to after correct password
         PassCodeScreen.set_transition_back_screen(MAIN_SCREEN_NAME)  # set screen name to transition to if "Back to Game is pressed"
-
+        PassCodeScreen.set_transition_back_screen(SECOND_SCREEN_NAME)
         super(AdminScreen, self).__init__(**kwargs)
 
     @staticmethod
@@ -116,6 +139,7 @@ SCREEN_MANAGER.add_widget(MainScreen(name=MAIN_SCREEN_NAME))
 SCREEN_MANAGER.add_widget(PassCodeScreen(name='passCode'))
 SCREEN_MANAGER.add_widget(PauseScreen(name='pauseScene'))
 SCREEN_MANAGER.add_widget(AdminScreen(name=ADMIN_SCREEN_NAME))
+SCREEN_MANAGER.add_widget(SecondScreen(name=SECOND_SCREEN_NAME))
 
 """
 MixPanel
